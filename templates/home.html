@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Airdrop tracker</title>
+
+<head>
+	<title>Airdrop tracker</title>
 	<link rel="apple-touch-icon" sizes="57x57" href="/static/apple-icon-57x57.png">
 	<link rel="apple-touch-icon" sizes="60x60" href="/static/apple-icon-60x60.png">
 	<link rel="apple-touch-icon" sizes="72x72" href="/static/apple-icon-72x72.png">
@@ -11,7 +12,7 @@
 	<link rel="apple-touch-icon" sizes="144x144" href="/static/apple-icon-144x144.png">
 	<link rel="apple-touch-icon" sizes="152x152" href="/static/apple-icon-152x152.png">
 	<link rel="apple-touch-icon" sizes="180x180" href="/static/apple-icon-180x180.png">
-	<link rel="icon" type="image/png" sizes="192x192"  href="/static/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="192x192" href="/static/android-icon-192x192.png">
 	<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
 	<link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96x96.png">
 	<link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
@@ -20,346 +21,402 @@
 	<meta name="msapplication-TileImage" content="/static/ms-icon-144x144.png">
 	<meta name="theme-color" content="#ffffff">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <style>
-      body {
-        background-color: #0d1a2b;
-        color: #cfd9df;
-        font-family: Arial, sans-serif;
-      }
-      .container {
-        max-width: 100%;
-      }
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+		integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<style>
+		body {
+			background-color: #0d1a2b;
+			color: #cfd9df;
+			font-family: Arial, sans-serif;
+		}
+
+		.container {
+			max-width: 100%;
+		}
+
 		.modal-content {
 			background-color: #0d1a2b;
 			color: #cfd9df;
-			border: 1px solid #444; /* Slightly lighter border for the modal */
+			border: 1px solid #444;
+			/* Slightly lighter border for the modal */
 		}
 
 		.modal-header {
-			border-bottom: 1px solid #444; /* Slightly lighter border for the modal header bottom */
+			border-bottom: 1px solid #444;
+			/* Slightly lighter border for the modal header bottom */
 		}
 
 		.modal-title {
-			color: #eaeaea; /* Light grey text color for the modal title */
+			color: #eaeaea;
+			/* Light grey text color for the modal title */
 		}
 
 		.close {
-			color: #eaeaea; /* Light grey text color for the close button */
+			color: #eaeaea;
+			/* Light grey text color for the close button */
 		}
 
 		.close:hover {
-			color: #fff; /* White text color on hover for the close button */
+			color: #fff;
+			/* White text color on hover for the close button */
 		}
-      .btn {
-        margin-top: 1em;
-        border-radius: 8px;
-        border: solid 1px #2f4f6f;
-      }
-	  .text-gray { color: #808080; }
-      .red { color: red; }
-      .green { color: green; }
-      .btn-danger { background-color: #f25961; }
-      .btn-primary { background-color: #1f77b4; }
-      .btn-success { background-color: #28a745; }
-      .card {
-        border: solid 1px #2f4f6f;
-        border-radius: 8px;
-      }
-      .form-control {
-        background-color: #0d1a2b;
-        color: #cfd9df;
-        border-color: #2f4f6f;
-      }
-      .list-group-item {
-        background-color: #0d1a2b;
-      }
-	  .btn-custom {
-		height: 42px;
-		line-height: 30px;
-	  }
-    </style>
+
+		.btn {
+			margin-top: 1em;
+			border-radius: 8px;
+			border: solid 1px #2f4f6f;
+		}
+
+		.text-gray {
+			color: #808080;
+		}
+
+		.red {
+			color: red;
+		}
+
+		.green {
+			color: green;
+		}
+
+		.btn-danger {
+			background-color: #f25961;
+		}
+
+		.btn-primary {
+			background-color: #1f77b4;
+		}
+
+		.btn-success {
+			background-color: #28a745;
+		}
+
+		.card {
+			border: solid 1px #2f4f6f;
+			border-radius: 8px;
+		}
+
+		.form-control {
+			background-color: #0d1a2b;
+			color: #cfd9df;
+			border-color: #2f4f6f;
+		}
+
+		.list-group-item {
+			background-color: #0d1a2b;
+		}
+
+		.btn-custom {
+			height: 42px;
+			line-height: 30px;
+		}
+	</style>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-	  <a class="navbar-brand" href="#">Airdrop Tracker</a>
+		<a class="navbar-brand" href="#">Airdrop Tracker</a>
 
-	  <div class="navbar-nav ml-auto">
-		<button type="button" class="btn btn-primary btn-custom mr-2" data-toggle="modal" data-target="#settingsModal">
-		  <i class="fas fa-cog"></i>
-		</button>
-		<form action="/upload_db" method="post" enctype="multipart/form-data" class="mr-2">
-		  <label for="file-upload" class="custom-file-upload btn btn-primary btn-custom">
-			<i class="fas fa-file-upload"></i> Load
-		  </label>
-		  <input id="file-upload" type="file" name="file" style="display:none;" accept=".db"/>
-		  <input type="submit" value="Upload" class="btn btn-primary btn-custom" style="display:none;">
-		</form>
-
-		<form action="/download_db" method="get" class="mr-2">
-		  <button type="submit" class="btn btn-primary btn-custom">
-			<i class="fas fa-file-download"></i> Save
-		  </button>
-		</form>
-	  </div>
-	</nav>
-  </head>
-  <body>
-    <div class="container">
-	  <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-		<div class="modal-content">
-		  <div class="modal-header">
-			<h5 class="modal-title" id="settingsModalLabel">Settings</h5>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
+		<div class="navbar-nav ml-auto">
+			<button type="button" class="btn btn-primary btn-custom mr-2" data-toggle="modal"
+				data-target="#settingsModal">
+				<i class="fas fa-cog"></i>
 			</button>
-		  </div>
-		  <div class="modal-body">
-			<!-- Add Wallet -->
-			<div class="card bg-dark text-white my-4">
-				<div class="card-body">
-					<h5 class="card-title">Add wallet</h5>
-					<form action="/add_wallet" method="post" class="d-flex align-items-center">
-						<input type="text" name="name" placeholder="Wallet name" class="form-control">
-						<input type="submit" value="Add Wallet" class="btn btn-primary ml-2">
-					</form>
-				</div>
-			</div>
-		
-			<!-- Add Blockchain -->
-			<div class="card bg-dark text-white my-4">
-				<div class="card-body">
-					<h5 class="card-title">Add blockchain</h5>
-					<form action="/add_blockchain" method="post" class="d-flex align-items-center">
-						<input type="text" name="name" placeholder="Blockchain name" class="form-control">
-						<input type="submit" value="Add Blockchain" class="btn btn-primary ml-2">
-					</form>
-				</div>
-			</div>
-		</div>
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		  </div>
-		</div>
-	  </div>
-	</div>
-
-      <!-- Wallet / Blockchain Matrix -->
-		<div class="card bg-dark text-white my-4">
-		  <div class="card-body">
-			<h5 class="card-title">Wallet / blockchain matrix</h5>
-			{% if matrix and matrix[0][1] %}
-			  <table class="table table-dark table-striped">
-				<thead>
-				  <tr>
-					<th>Wallet / blockchain</th>
-					{% for blockchain, _, _ in matrix[0][1] %}
-					  <th>{{ blockchain }}</th>
-					{% endfor %}
-				  </tr>
-				</thead>
-				<tbody>
-				  {% for wallet_name, row in matrix %}
-					  <tr>
-						<td>{{ wallet_name }}</td>
-						{% for blockchain_name, volume, date in row %}
-						  <td>
-							<span class="{% if volume > 10000 %}text-success{% elif volume == 0 %}text-gray{% else %}text-danger{% endif %}">{{ volume }}</span>
-							<br>
-							<div style="display: inline-block;">
-								<span class="badge {% if date and within_same_day(date) %}bg-success{% elif date %}bg-danger{% else %}bg-gray{% endif %}">D</span>
-								<span class="badge {% if date and within_same_week(date) %}bg-success{% elif date %}bg-danger{% else %}bg-gray{% endif %}">W</span>
-								<span class="badge {% if date and within_same_month(date) %}bg-success{% elif date %}bg-danger{% else %}bg-gray{% endif %}">M</span>								
-							</div>
-							<br>
-							<small>Last transaction: {{ date|default('N/A') }}</small>
-						  </td>
-						{% endfor %}
-					  </tr>
-					{% endfor %}
-				</tbody>
-			  </table>
-			{% else %}
-			  <p>No wallets or blockchains available.</p>
-			{% endif %}
-		  </div>
-		</div>
-		      <!-- Add Transaction -->
-		<div class="card bg-dark text-white my-4">
-		  <div class="card-body">
-			<h5 class="card-title">Add transaction</h5>
-			<form action="/add_transaction" method="post" class="d-flex transaction-form">
-			  <select name="wallet_id" class="form-control">
-				{% for wallet in wallets %}
-				  <option value="{{ wallet.id }}">{{ wallet.name }}</option>
-				{% endfor %}
-			  </select>
-			  <select name="blockchain_id" class="form-control ml-2">
-				{% for blockchain in blockchains %}
-				  <option value="{{ blockchain.id }}">{{ blockchain.name }}</option>
-				{% endfor %}
-			  </select>
-			  <input type="number" step="0.01" name="volume" placeholder="Volume" class="form-control ml-2">
-			  <input type="datetime-local" name="date" class="form-control ml-2">
-			  <input type="submit" value="Add Transaction" class="btn btn-success ml-2">
+			<form action="/upload_db" method="post" enctype="multipart/form-data" class="mr-2">
+				<label for="file-upload" class="custom-file-upload btn btn-primary btn-custom">
+					<i class="fas fa-file-upload"></i> Load
+				</label>
+				<input id="file-upload" type="file" name="file" style="display:none;" accept=".db" />
+				<input type="submit" value="Upload" class="btn btn-primary btn-custom" style="display:none;">
 			</form>
-		  </div>
+
+			<form action="/download_db" method="get" class="mr-2">
+				<button type="submit" class="btn btn-primary btn-custom">
+					<i class="fas fa-file-download"></i> Save
+				</button>
+			</form>
+		</div>
+	</nav>
+</head>
+
+<body>
+	<div class="container">
+		<div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel"
+			aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<!-- Add Wallet -->
+						<div class="card bg-dark text-white my-4">
+							<div class="card-body">
+								<h5 class="card-title">Add wallet</h5>
+								<form action="/add_wallet" method="post" class="d-flex align-items-center">
+									<input type="text" name="name" placeholder="Wallet name" class="form-control">
+									<input type="submit" value="Add Wallet" class="btn btn-primary ml-2">
+								</form>
+							</div>
+						</div>
+
+						<!-- Add Blockchain -->
+						<div class="card bg-dark text-white my-4">
+							<div class="card-body">
+								<h5 class="card-title">Add blockchain</h5>
+								<form action="/add_blockchain" method="post" class="d-flex align-items-center">
+									<input type="text" name="name" placeholder="Blockchain name" class="form-control">
+									<input type="submit" value="Add Blockchain" class="btn btn-primary ml-2">
+								</form>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
 		</div>
 
-<!-- Transactions -->
-<div class="card bg-dark text-white my-4">
-    <div class="card-body">
-        <h5 class="card-title">Transactions</h5>
-        
-		<!-- Tabs for each wallet -->
-		<ul class="nav nav-tabs" id="walletTabs" role="tablist">
-			{% for wallet_name in transactions|map(attribute='wallet.name')|unique %}
-				<li class="nav-item">
-					<a class="nav-link {% if loop.first %}active{% endif %}" id="{{ wallet_name|replace(' ', '_')|e }}-tab" data-toggle="tab" href="#{{ wallet_name|replace(' ', '_')|e }}" role="tab" aria-controls="{{ wallet_name|replace(' ', '_')|e }}" aria-selected="{% if loop.first %}true{% else %}false{% endif %}">{{ wallet_name }}</a>
-				</li>
-			{% endfor %}
-		</ul>
+		<!-- Wallet / Blockchain Matrix -->
+		<div class="card bg-dark text-white my-4">
+			<div class="card-body">
+				<h5 class="card-title">Wallet / blockchain matrix</h5>
+				{% if matrix and matrix[0][1] %}
+				<table class="table table-dark table-striped">
+					<thead>
+						<tr>
+							<th>Wallet / blockchain</th>
+							{% for blockchain, _, _ in matrix[0][1] %}
+							<th>{{ blockchain }}</th>
+							{% endfor %}
+						</tr>
+					</thead>
+					<tbody>
+						{% for wallet_name, row in matrix %}
+						<tr>
+							<td>{{ wallet_name }}</td>
+							{% for blockchain_name, volume, date in row %}
+							<td>
+								<span
+									class="{% if volume > 10000 %}text-success{% elif volume == 0 %}text-gray{% else %}text-danger{% endif %}">{{
+									volume }}</span>
+								<br>
+								<div style="display: inline-block;">
+									<span
+										class="badge {% if date and within_same_day(date) %}bg-success{% elif date %}bg-danger{% else %}bg-gray{% endif %}">D</span>
+									<span
+										class="badge {% if date and within_same_week(date) %}bg-success{% elif date %}bg-danger{% else %}bg-gray{% endif %}">W</span>
+									<span
+										class="badge {% if date and within_same_month(date) %}bg-success{% elif date %}bg-danger{% else %}bg-gray{% endif %}">M</span>
+								</div>
+								<br>
+								<small>Last transaction: {{ date|default('N/A') }}</small>
+							</td>
+							{% endfor %}
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				{% else %}
+				<p>No wallets or blockchains available.</p>
+				{% endif %}
+			</div>
+		</div>
+		
+		<!-- Add Transaction -->
+		<div class="card bg-dark text-white my-4">
+			<div class="card-body">
+				<h5 class="card-title">Add transaction</h5>
+				<form action="/add_transaction" method="post" class="d-flex transaction-form">
+					<select name="wallet_id" class="form-control">
+						{% for wallet in wallets %}
+						<option value="{{ wallet.id }}">{{ wallet.name }}</option>
+						{% endfor %}
+					</select>
+					<select name="blockchain_id" class="form-control ml-2">
+						{% for blockchain in blockchains %}
+						<option value="{{ blockchain.id }}">{{ blockchain.name }}</option>
+						{% endfor %}
+					</select>
+					<input type="number" step="0.01" name="volume" placeholder="Volume" class="form-control ml-2">
+					<input type="datetime-local" name="date" class="form-control ml-2">
+					<input type="submit" value="Add Transaction" class="btn btn-success ml-2">
+				</form>
+			</div>
+		</div>
 
-		<!-- Tab content for each wallet -->
-		<div class="tab-content" id="walletTabsContent">
-			{% for wallet_name in transactions|map(attribute='wallet.name')|unique %}
-				<div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="{{ wallet_name|replace(' ', '_')|e }}" role="tabpanel" aria-labelledby="{{ wallet_name|replace(' ', '_')|e }}-tab">
-                    <ul class="list-group">
-                        {% set count = 0 %}
-                        {% for transaction in transactions if transaction.wallet.name == wallet_name %}
-                            {% set count = count + 1 %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center bg-dark {% if count > 25 %}d-none{% endif %}" data-page="{{ (count // 25) + 1 }}">
-                                {{ transaction.date }}: {{ transaction.volume }} from {{ transaction.wallet.name }} on {{ transaction.blockchain.name }}
-                                <form action="/delete_transaction/{{ transaction.id }}" method="post">
-                                    <input type="submit" value="Delete" class="btn btn-danger">
-                                </form>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    
-                    <!-- Pagination -->
-                    <nav aria-label="Transaction navigation">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item disabled" data-action="prev">
-                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                            </li>
-                            {% for i in range(1, (count // 25) + 2) %}
-                                <li class="page-item {% if i == 1 %}active{% endif %}" data-page="{{ i }}"><a class="page-link" href="#">{{ i }}</a></li>
-                            {% endfor %}
-                            <li class="page-item {% if count <= 25 %}disabled{% endif %}" data-action="next">
-                                <a class="page-link" href="#">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-	<script>
-	window.onload = function() {
-		// Get the form elements
-		let transactionForm = document.querySelector('.transaction-form');
-		let walletSelect = transactionForm.querySelector('[name="wallet_id"]');
-		let blockchainSelect = transactionForm.querySelector('[name="blockchain_id"]');
-		let volumeInput = transactionForm.querySelector('[name="volume"]');
-		let dateInput = transactionForm.querySelector('[name="date"]');
-		let submitButton = transactionForm.querySelector('[type="submit"]');
+		<!-- Transactions -->
+		<div class="card bg-dark text-white my-4">
+			<div class="card-body">
+				<h5 class="card-title">Transactions</h5>
 
-		// Function to check if the selected value is valid
-		function isValidSelectValue(selectElement) {
-			let value = selectElement.value;
-			for (let i = 0; i < selectElement.options.length; i++) {
-				if (selectElement.options[i].value === value) {
-					return true;
-				}
-			}
-			return false;
-		}
+				<!-- Tabs for each wallet -->
+				<ul class="nav nav-tabs" id="walletTabs" role="tablist">
+					{% for wallet_name in transactions|map(attribute='wallet.name')|unique %}
+					<li class="nav-item">
+						<a class="nav-link {% if loop.first %}active{% endif %}"
+							id="{{ wallet_name|replace(' ', '_')|e }}-tab" data-toggle="tab"
+							href="#{{ wallet_name|replace(' ', '_')|e }}" role="tab"
+							aria-controls="{{ wallet_name|replace(' ', '_')|e }}"
+							aria-selected="{% if loop.first %}true{% else %}false{% endif %}">{{ wallet_name }}</a>
+					</li>
+					{% endfor %}
+				</ul>
 
-		// Function to update the submit button state
-		function updateSubmitButtonState() {
-			let isWalletSelected = isValidSelectValue(walletSelect);
-			let isBlockchainSelected = isValidSelectValue(blockchainSelect);
-			let isVolumeEntered = volumeInput.value !== '';
-			let isDateEntered = dateInput.value !== '';
-			
-			submitButton.disabled = !(isWalletSelected && isBlockchainSelected && isVolumeEntered && isDateEntered);
-		}
+				<!-- Tab content for each wallet -->
+				<div class="tab-content" id="walletTabsContent">
+					{% for wallet_name in transactions|map(attribute='wallet.name')|unique %}
+					<div class="tab-pane fade {% if loop.first %}show active{% endif %}"
+						id="{{ wallet_name|replace(' ', '_')|e }}" role="tabpanel"
+						aria-labelledby="{{ wallet_name|replace(' ', '_')|e }}-tab">
+						<ul class="list-group">
+							{% set count = 0 %}
+							{% for transaction in transactions if transaction.wallet.name == wallet_name %}
+							{% set count = count + 1 %}
+							<li class="list-group-item d-flex justify-content-between align-items-center bg-dark {% if count > 25 %}d-none{% endif %}"
+								data-page="{{ (count // 25) + 1 }}">
+								{{ transaction.date }}: {{ transaction.volume }} from {{ transaction.wallet.name }} on
+								{{ transaction.blockchain.name }}
+								<form action="/delete_transaction/{{ transaction.id }}" method="post">
+									<input type="submit" value="Delete" class="btn btn-danger">
+								</form>
+							</li>
+							{% endfor %}
+						</ul>
 
-		// Listen for changes
-		walletSelect.addEventListener('change', updateSubmitButtonState);
-		blockchainSelect.addEventListener('change', updateSubmitButtonState);
-		volumeInput.addEventListener('input', updateSubmitButtonState);
-		dateInput.addEventListener('input', updateSubmitButtonState);
+						<!-- Pagination -->
+						<nav aria-label="Transaction navigation">
+							<ul class="pagination justify-content-center">
+								<li class="page-item disabled" data-action="prev">
+									<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+								</li>
+								{% for i in range(1, (count // 25) + 2) %}
+								<li class="page-item {% if i == 1 %}active{% endif %}" data-page="{{ i }}"><a
+										class="page-link" href="#">{{ i }}</a></li>
+								{% endfor %}
+								<li class="page-item {% if count <= 25 %}disabled{% endif %}" data-action="next">
+									<a class="page-link" href="#">Next</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+		<script>
+			window.onload = function () {
+				// Get the form elements
+				let transactionForm = document.querySelector('.transaction-form');
+				let walletSelect = transactionForm.querySelector('[name="wallet_id"]');
+				let blockchainSelect = transactionForm.querySelector('[name="blockchain_id"]');
+				let volumeInput = transactionForm.querySelector('[name="volume"]');
+				let dateInput = transactionForm.querySelector('[name="date"]');
+				let submitButton = transactionForm.querySelector('[type="submit"]');
 
-		// Update the submit button state initially
-		updateSubmitButtonState();
-	};
-	</script>
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			let currentPages = {};
-			
-			document.querySelectorAll('.pagination .page-item').forEach(function(pageItem) {
-				pageItem.addEventListener('click', function(e) {
-					e.preventDefault();
-					
-					const action = this.dataset.action;
-					const page = parseInt(this.dataset.page, 10);
-					const tabPane = this.closest('.tab-pane');
-					const walletName = tabPane.id;
-					
-					currentPages[walletName] = currentPages[walletName] || 1;
-					
-					if (action === 'prev') {
-						currentPages[walletName] = Math.max(1, currentPages[walletName] - 1);
-					} else if (action === 'next') {
-						currentPages[walletName] = currentPages[walletName] + 1;
-					} else {
-						currentPages[walletName] = page;
+				// Function to check if the selected value is valid
+				function isValidSelectValue(selectElement) {
+					let value = selectElement.value;
+					for (let i = 0; i < selectElement.options.length; i++) {
+						if (selectElement.options[i].value === value) {
+							return true;
+						}
 					}
-					
-					updateVisibleTransactions(tabPane, currentPages[walletName]);
+					return false;
+				}
+
+				// Function to update the submit button state
+				function updateSubmitButtonState() {
+					let isWalletSelected = isValidSelectValue(walletSelect);
+					let isBlockchainSelected = isValidSelectValue(blockchainSelect);
+					let isVolumeEntered = volumeInput.value !== '';
+					let isDateEntered = dateInput.value !== '';
+
+					submitButton.disabled = !(isWalletSelected && isBlockchainSelected && isVolumeEntered && isDateEntered);
+				}
+
+				// Listen for changes
+				walletSelect.addEventListener('change', updateSubmitButtonState);
+				blockchainSelect.addEventListener('change', updateSubmitButtonState);
+				volumeInput.addEventListener('input', updateSubmitButtonState);
+				dateInput.addEventListener('input', updateSubmitButtonState);
+
+				// Update the submit button state initially
+				updateSubmitButtonState();
+			};
+		</script>
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+				let currentPages = {};
+
+				document.querySelectorAll('.pagination .page-item').forEach(function (pageItem) {
+					pageItem.addEventListener('click', function (e) {
+						e.preventDefault();
+
+						const action = this.dataset.action;
+						const page = parseInt(this.dataset.page, 10);
+						const tabPane = this.closest('.tab-pane');
+						const walletName = tabPane.id;
+
+						currentPages[walletName] = currentPages[walletName] || 1;
+
+						if (action === 'prev') {
+							currentPages[walletName] = Math.max(1, currentPages[walletName] - 1);
+						} else if (action === 'next') {
+							currentPages[walletName] = currentPages[walletName] + 1;
+						} else {
+							currentPages[walletName] = page;
+						}
+
+						updateVisibleTransactions(tabPane, currentPages[walletName]);
+					});
 				});
+
+				function updateVisibleTransactions(tabPane, page) {
+					const transactions = tabPane.querySelectorAll('.list-group-item');
+					transactions.forEach(function (transaction) {
+						if (parseInt(transaction.dataset.page, 10) === page) {
+							transaction.classList.remove('d-none');
+						} else {
+							transaction.classList.add('d-none');
+						}
+					});
+
+					const pageItems = tabPane.querySelectorAll('.pagination .page-item');
+					pageItems.forEach(function (pageItem) {
+						const itemPage = parseInt(pageItem.dataset.page, 10);
+						if (itemPage === page) {
+							pageItem.classList.add('active');
+						} else {
+							pageItem.classList.remove('active');
+						}
+					});
+
+					const prevItem = tabPane.querySelector('.pagination .page-item[data-action="prev"]');
+					const nextItem = tabPane.querySelector('.pagination .page-item[data-action="next"]');
+					if (page === 1) {
+						prevItem.classList.add('disabled');
+					} else {
+						prevItem.classList.remove('disabled');
+					}
+					if (page * 25 >= transactions.length) {
+						nextItem.classList.add('disabled');
+					} else {
+						nextItem.classList.remove('disabled');
+					}
+				}
 			});
-			
-			function updateVisibleTransactions(tabPane, page) {
-				const transactions = tabPane.querySelectorAll('.list-group-item');
-				transactions.forEach(function(transaction) {
-					if (parseInt(transaction.dataset.page, 10) === page) {
-						transaction.classList.remove('d-none');
-					} else {
-						transaction.classList.add('d-none');
-					}
-				});
-				
-				const pageItems = tabPane.querySelectorAll('.pagination .page-item');
-				pageItems.forEach(function(pageItem) {
-					const itemPage = parseInt(pageItem.dataset.page, 10);
-					if (itemPage === page) {
-						pageItem.classList.add('active');
-					} else {
-						pageItem.classList.remove('active');
-					}
-				});
-				
-				const prevItem = tabPane.querySelector('.pagination .page-item[data-action="prev"]');
-				const nextItem = tabPane.querySelector('.pagination .page-item[data-action="next"]');
-				if (page === 1) {
-					prevItem.classList.add('disabled');
-				} else {
-					prevItem.classList.remove('disabled');
-				}
-				if (page * 25 >= transactions.length) {
-					nextItem.classList.add('disabled');
-				} else {
-					nextItem.classList.remove('disabled');
-				}
-			}
-		});
-	</script>
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-  </body>
+		</script>
+		<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+			integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+			crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+			integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+			crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
+			integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+			crossorigin="anonymous"></script>
+</body>
+
 </html>
