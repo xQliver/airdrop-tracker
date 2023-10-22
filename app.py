@@ -92,8 +92,18 @@ def home():
                 else None
             )
 
-            # Append the blockchain name, volume, and last transaction date to the row
-            row.append((blockchain.name, volume, last_date))
+            # Count unique months transacted
+            unique_months = set()
+            for transaction in wallet_blockchain_transactions:
+                year_month = (transaction.date.year, transaction.date.month)
+                unique_months.add(year_month)
+            num_unique_months = len(unique_months)
+
+            # Count total number of transactions
+            total_transactions = len(wallet_blockchain_transactions)
+
+            # Append the blockchain name, volume, last transaction date, unique months, and total transactions to the row
+            row.append((blockchain.name, volume, last_date, num_unique_months, total_transactions))
 
         matrix.append((wallet.name, row))
 

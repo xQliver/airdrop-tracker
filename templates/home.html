@@ -187,8 +187,8 @@
 					<thead>
 						<tr>
 							<th>Wallet / blockchain</th>
-							{% for blockchain, _, _ in matrix[0][1] %}
-							<th>{{ blockchain }}</th>
+							{% for item in matrix[0][1] %}
+							<th>{{ item[0]|default('N/A') }}</th>
 							{% endfor %}
 						</tr>
 					</thead>
@@ -196,22 +196,26 @@
 						{% for wallet_name, row in matrix %}
 						<tr>
 							<td>{{ wallet_name }}</td>
-							{% for blockchain_name, volume, date in row %}
+							{% for item in row %}
 							<td>
 								<span
-									class="{% if volume > 10000 %}text-success{% elif volume == 0 %}text-gray{% else %}text-danger{% endif %}">{{
-									volume }}</span>
+									class="{% if item[1]|default(0) > 10000 %}text-success{% elif item[1]|default(0) == 0 %}text-gray{% else %}text-danger{% endif %}">
+									${{ '{:,.0f}'.format(item[1])|default('0') }}
+								</span>
 								<br>
 								<div style="display: inline-block;">
 									<span
-										class="badge {% if date and within_same_day(date) %}bg-success{% elif date %}bg-danger{% else %}bg-gray{% endif %}">D</span>
+										class="badge {% if item[2] and within_same_day(item[2]) %}bg-success{% elif item[2] %}bg-danger{% else %}bg-gray{% endif %}">D</span>
 									<span
-										class="badge {% if date and within_same_week(date) %}bg-success{% elif date %}bg-danger{% else %}bg-gray{% endif %}">W</span>
+										class="badge {% if item[2] and within_same_week(item[2]) %}bg-success{% elif item[2] %}bg-danger{% else %}bg-gray{% endif %}">W</span>
 									<span
-										class="badge {% if date and within_same_month(date) %}bg-success{% elif date %}bg-danger{% else %}bg-gray{% endif %}">M</span>
+										class="badge {% if item[2] and within_same_month(item[2]) %}bg-success{% elif item[2] %}bg-danger{% else %}bg-gray{% endif %}">M</span>
 								</div>
 								<br>
-								<small>Last transaction: {{ date|default('N/A') }}</small>
+								<small>Last transaction: {{ item[2]|default('N/A') }}</small>
+								<br>
+								<small>Months: {{ item[3]|default('0') }}</small><small>, Tx: {{ item[4]|default('0')
+									}}</small>
 							</td>
 							{% endfor %}
 						</tr>
@@ -223,7 +227,9 @@
 				{% endif %}
 			</div>
 		</div>
-		
+
+
+
 		<!-- Add Transaction -->
 		<div class="card bg-dark text-white my-4">
 			<div class="card-body">
