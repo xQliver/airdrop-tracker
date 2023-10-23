@@ -259,31 +259,30 @@
 
 				<!-- Tabs for each wallet -->
 				<ul class="nav nav-tabs" id="walletTabs" role="tablist">
-					{% for wallet_name in transactions|map(attribute='wallet.name')|unique %}
+					{% for wallet in wallets %}
 					<li class="nav-item">
 						<a class="nav-link {% if loop.first %}active{% endif %}"
-							id="{{ wallet_name|replace(' ', '_')|e }}-tab" data-toggle="tab"
-							href="#{{ wallet_name|replace(' ', '_')|e }}" role="tab"
-							aria-controls="{{ wallet_name|replace(' ', '_')|e }}"
-							aria-selected="{% if loop.first %}true{% else %}false{% endif %}">{{ wallet_name }}</a>
+							id="{{ wallet.name|replace(' ', '_')|e }}-tab" data-toggle="tab"
+							href="#{{ wallet.name|replace(' ', '_')|e }}" role="tab"
+							aria-controls="{{ wallet.name|replace(' ', '_')|e }}"
+							aria-selected="{% if loop.first %}true{% else %}false{% endif %}">{{ wallet.name }}</a>
 					</li>
 					{% endfor %}
 				</ul>
 
 				<!-- Tab content for each wallet -->
 				<div class="tab-content" id="walletTabsContent">
-					{% for wallet_name in transactions|map(attribute='wallet.name')|unique %}
+					{% for wallet in wallets %}
 					<div class="tab-pane fade {% if loop.first %}show active{% endif %}"
-						id="{{ wallet_name|replace(' ', '_')|e }}" role="tabpanel"
-						aria-labelledby="{{ wallet_name|replace(' ', '_')|e }}-tab">
+						id="{{ wallet.name|replace(' ', '_')|e }}" role="tabpanel"
+						aria-labelledby="{{ wallet.name|replace(' ', '_')|e }}-tab">
 						<ul class="list-group">
 							{% set count = 0 %}
-							{% for transaction in transactions if transaction.wallet.name == wallet_name %}
+							{% for transaction in wallet.transactions %}
 							{% set count = count + 1 %}
 							<li class="list-group-item d-flex justify-content-between align-items-center bg-dark {% if count > 25 %}d-none{% endif %}"
 								data-page="{{ (count // 25) + 1 }}">
-								{{ transaction.date }}: {{ transaction.volume }} from {{ transaction.wallet.name }} on
-								{{ transaction.blockchain.name }}
+								{{ transaction.date }}: ${{ "{:,}".format(transaction.volume|int) }} from {{ transaction.wallet.name }} on {{ transaction.blockchain.name }}
 								<form action="/delete_transaction/{{ transaction.id }}" method="post">
 									<input type="submit" value="Delete" class="btn btn-danger">
 								</form>
@@ -309,8 +308,10 @@
 					</div>
 					{% endfor %}
 				</div>
+
 			</div>
 		</div>
+
 		<script>
 			window.onload = function () {
 				// Get the form elements
