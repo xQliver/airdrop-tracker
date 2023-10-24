@@ -23,6 +23,7 @@ class Wallet(db.Model):
 class Blockchain(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
+    evm = db.Column(db.Integer, nullable=False)
     transactions = db.relationship("Transaction", backref="blockchain", lazy=True)
 
 
