@@ -72,52 +72,70 @@ def home():
     blockchains = Blockchain.query.all()
     transactions = Transaction.query.all()
 
-    matrix = []
+    evm_blockchains = [blockchain for blockchain in blockchains if blockchain.evm == 1]
+    non_evm_blockchains = [blockchain for blockchain in blockchains if blockchain.evm == 0]
+
+    # EVM Wallets Matrix
+    evm_matrix = []
     for wallet in wallets:
         row = []
-        for blockchain in blockchains:
-            # Get the transactions for this wallet and blockchain
-            wallet_blockchain_transactions = [
-                transaction
-                for transaction in wallet.transactions
-                if transaction.blockchain == blockchain
-            ]
+        has_interaction = False
+        for blockchain in evm_blockchains:
+            data = _get_wallet_blockchain_data(wallet, blockchain)
+            row.extend(data)
+            if data[0][1] > 0:  # If there's any volume, it indicates an interaction
+                has_interaction = True
+        if has_interaction:  # Only add to the matrix if there was an interaction
+            evm_matrix.append((wallet.name, row))
 
-            # Calculate the total volume
-            volume = sum(transaction.volume for transaction in wallet_blockchain_transactions)
+    evm_wallet_names = [entry[0] for entry in evm_matrix]
+    evm_wallets = [wallet for wallet in wallets if wallet.name in evm_wallet_names]
 
-            # Get the date of the last transaction
-            last_date = (
-                max(transaction.date for transaction in wallet_blockchain_transactions)
-                if wallet_blockchain_transactions
-                else None
-            )
-
-            # Count unique months transacted
-            unique_months = set()
-            for transaction in wallet_blockchain_transactions:
-                year_month = (transaction.date.year, transaction.date.month)
-                unique_months.add(year_month)
-            num_unique_months = len(unique_months)
-
-            # Count total number of transactions
-            total_transactions = len(wallet_blockchain_transactions)
-
-            # Append the blockchain name, volume, last transaction date, unique months, and total transactions to the row
-            row.append((blockchain.name, volume, last_date, num_unique_months, total_transactions))
-
-        matrix.append((wallet.name, row))
+    # Non-EVM Wallets Matrix (one per blockchain)
+    non_evm_matrices = {}
+    for blockchain in non_evm_blockchains:
+        matrix = []
+        for wallet in wallets:
+            row = _get_wallet_blockchain_data(wallet, blockchain)
+            if any(data[1] for data in row):  # Check if there's any volume, indicating interaction
+                matrix.append((wallet.name, row))
+        non_evm_matrices[blockchain.name] = matrix
 
     return render_template(
         "home.html",
-        wallets=wallets,
-        blockchains=blockchains,
-        transactions=transactions,
-        matrix=matrix,
+        wallets=wallets,  # For adding new transactions
+        evm_wallets=evm_wallets,  # EVM compatible wallets
+        evm_matrix=evm_matrix,  # EVM blockchain matrix
+        non_evm_matrices=non_evm_matrices,  # Matrices of all non-EVM based blockchains
+        transactions=transactions,  # List of all transactions
+        non_evm_blockchains=non_evm_blockchains,  # All non-EVM blockchains
         within_same_day=within_same_day,
         within_same_week=within_same_week,
         within_same_month=within_same_month,
     )
+
+
+def _get_wallet_blockchain_data(wallet, blockchain):
+    # Helper function to get wallet-blockchain interaction data
+    wallet_blockchain_transactions = [
+        transaction for transaction in wallet.transactions if transaction.blockchain == blockchain
+    ]
+
+    volume = sum(transaction.volume for transaction in wallet_blockchain_transactions)
+    last_date = (
+        max(transaction.date for transaction in wallet_blockchain_transactions)
+        if wallet_blockchain_transactions
+        else None
+    )
+
+    unique_months = set(
+        (transaction.date.year, transaction.date.month)
+        for transaction in wallet_blockchain_transactions
+    )
+    num_unique_months = len(unique_months)
+    total_transactions = len(wallet_blockchain_transactions)
+
+    return [(blockchain.name, volume, last_date, num_unique_months, total_transactions)]
 
 
 @app.route("/add_wallet", methods=["POST"])

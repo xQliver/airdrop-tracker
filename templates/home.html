@@ -178,113 +178,97 @@
 			</div>
 		</div>
 
-		<!-- Wallet / Blockchain Matrix -->
+		<!-- EVM Table -->
 		<div class="card bg-dark text-white my-4">
 			<div class="card-body">
-				<h5 class="card-title">EVM compatible chains</h5>
-				{% if matrix and matrix[0][1] %}
+				<h5 class="card-title">EVM compatible blockchains</h5>
 				<table class="table table-dark table-striped">
 					<thead>
 						<tr>
-							<th>Wallet / blockchain</th>
-							{% for blockchain in blockchains %}
-							{% if blockchain.evm == 1 %}
-							<th>{{ blockchain.name|default('N/A') }}</th>
-							{% endif %}
+							<th>Wallet</th>
+							{% for blockchain_data in evm_matrix[0][1] %}
+							<th>{{ blockchain_data[0] }}</th>
 							{% endfor %}
 						</tr>
 					</thead>
 					<tbody>
-						{% for wallet_name, row in matrix %}
+						{% for wallet, row in evm_matrix %}
 						<tr>
-							<td>{{ wallet_name }}</td>
-							{% for item in row %}
-							{% set current_index = loop.index0 %}
-							{% if blockchains[current_index].evm == 1 %}
+							<td>{{ wallet }}</td>
+							{% for data in row %}
 							<td>
-								<span
-									class="{% if item[1]|default(0) > 10000 %}text-success{% elif item[1]|default(0) == 0 %}text-gray{% else %}text-danger{% endif %}">
-									${{ '{:,.0f}'.format(item[1])|default('0') }}
-								</span>
-								<br>
-								<div style="display: inline-block;">
+								<div class="{% if data[4]|default(0) == 0 %}text-gray{% endif %}">
 									<span
-										class="badge {% if item[2] and within_same_day(item[2]) %}bg-success{% elif item[2] %}bg-danger{% else %}bg-gray{% endif %}">D</span>
-									<span
-										class="badge {% if item[2] and within_same_week(item[2]) %}bg-success{% elif item[2] %}bg-danger{% else %}bg-gray{% endif %}">W</span>
-									<span
-										class="badge {% if item[2] and within_same_month(item[2]) %}bg-success{% elif item[2] %}bg-danger{% else %}bg-gray{% endif %}">M</span>
-								</div>
-								<br>
-								<small>Last transaction: {{ item[2]|default('N/A') }}</small>
-								<br>
-								<small>Months: {{ item[3]|default('0') }}</small><small>, Tx: {{ item[4]|default('0')
-									}}</small>
+										class="{% if data[1]|default(0) > 10000 %}text-success{% elif data[1]|default(0) == 0 %}text-gray{% else %}text-danger{% endif %}">
+										${{ '{:,.0f}'.format(data[1])|default('0') }}
+									</span>
+									<br>
+									<div style="display: inline-block;">
+										<span
+											class="badge {% if data[2] and within_same_day(data[2]) %}bg-success{% elif data[2] %}bg-danger{% else %}bg-gray{% endif %}">D</span>
+										<span
+											class="badge {% if data[2] and within_same_week(data[2]) %}bg-success{% elif data[2] %}bg-danger{% else %}bg-gray{% endif %}">W</span>
+										<span
+											class="badge {% if data[2] and within_same_month(data[2]) %}bg-success{% elif data[2] %}bg-danger{% else %}bg-gray{% endif %}">M</span>
+									</div>
+									<br>
+									<small>Last transaction: {{ data[2]|default('N/A') }}</small>
+									<br>
+									<small>Months: {% if data[4]|default(0) == 0 %}-{% else %}{{ data[3]|default('0') }}{% endif %}</small>
+									<small>, Tx: {% if data[4]|default(0) == 0 %}-{% else %}{{ data[4]|default('0') }}{% endif %}</small>
+								</div>								
 							</td>
-							{% endif %}
 							{% endfor %}
 						</tr>
 						{% endfor %}
 					</tbody>
 				</table>
-				{% else %}
-				<p>No wallets or blockchains available.</p>
-				{% endif %}
 			</div>
 		</div>
 
-		<!-- Wallet / Blockchain Matrix -->
+		<!-- Non-EVM Tables -->
 		<div class="card bg-dark text-white my-4">
 			<div class="card-body">
 				<h5 class="card-title">Non-EVM chains</h5>
-				{% if matrix and matrix[0][1] %}
+				{% for blockchain_name, matrix in non_evm_matrices.items() %}
+				<h2>{{ blockchain_name }}</h2>
 				<table class="table table-dark table-striped">
 					<thead>
 						<tr>
-							<th>Wallet / blockchain</th>
-							{% for blockchain in blockchains %}
-							{% if blockchain.evm == 0 %}
-							<th>{{ blockchain.name|default('N/A') }}</th>
-							{% endif %}
-							{% endfor %}
+							<th>Wallet</th>
+							<th>{{ blockchain_name }}</th>
 						</tr>
 					</thead>
 					<tbody>
-						{% for wallet_name, row in matrix %}
+						{% for wallet, row in matrix %}
 						<tr>
-							<td>{{ wallet_name }}</td>
-							{% for item in row %}
-							{% set current_index = loop.index0 %}
-							{% if blockchains[current_index].evm == 0 %}
+							<td>{{ wallet }}</td> <!-- Displaying the wallet name -->
 							<td>
 								<span
-									class="{% if item[1]|default(0) > 10000 %}text-success{% elif item[1]|default(0) == 0 %}text-gray{% else %}text-danger{% endif %}">
-									${{ '{:,.0f}'.format(item[1])|default('0') }}
+									class="{% if row[0][1]|default(0) > 10000 %}text-success{% elif row[0][1]|default(0) == 0 %}text-gray{% else %}text-danger{% endif %}">
+									${{ '{:,.0f}'.format(row[0][1])|default('0') }}
 								</span>
 								<br>
 								<div style="display: inline-block;">
 									<span
-										class="badge {% if item[2] and within_same_day(item[2]) %}bg-success{% elif item[2] %}bg-danger{% else %}bg-gray{% endif %}">D</span>
+										class="badge {% if row[0][2] and within_same_day(row[0][2]) %}bg-success{% elif row[0][2] %}bg-danger{% else %}bg-gray{% endif %}">D</span>
 									<span
-										class="badge {% if item[2] and within_same_week(item[2]) %}bg-success{% elif item[2] %}bg-danger{% else %}bg-gray{% endif %}">W</span>
+										class="badge {% if row[0][2] and within_same_week(row[0][2]) %}bg-success{% elif row[0][2] %}bg-danger{% else %}bg-gray{% endif %}">W</span>
 									<span
-										class="badge {% if item[2] and within_same_month(item[2]) %}bg-success{% elif item[2] %}bg-danger{% else %}bg-gray{% endif %}">M</span>
+										class="badge {% if row[0][2] and within_same_month(row[0][2]) %}bg-success{% elif row[0][2] %}bg-danger{% else %}bg-gray{% endif %}">M</span>
 								</div>
 								<br>
-								<small>Last transaction: {{ item[2]|default('N/A') }}</small>
+								<small>Last transaction: {{ row[0][2] }}</small>
 								<br>
-								<small>Months: {{ item[3]|default('0') }}</small><small>, Tx: {{ item[4]|default('0')
+								<small>Months: {{ row[0][3] }}</small><small>, Tx: {{
+									row[0][4]
 									}}</small>
 							</td>
-							{% endif %}
-							{% endfor %}
 						</tr>
 						{% endfor %}
 					</tbody>
 				</table>
-				{% else %}
-				<p>No wallets or blockchains available.</p>
-				{% endif %}
+				{% endfor %}
 			</div>
 		</div>
 
