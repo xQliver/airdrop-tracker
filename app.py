@@ -88,9 +88,6 @@ def home():
         if has_interaction:  # Only add to the matrix if there was an interaction
             evm_matrix.append((wallet.name, row))
 
-    evm_wallet_names = [entry[0] for entry in evm_matrix]
-    evm_wallets = [wallet for wallet in wallets if wallet.name in evm_wallet_names]
-
     # Non-EVM Wallets Matrix (one per blockchain)
     non_evm_matrices = {}
     for blockchain in non_evm_blockchains:
@@ -103,12 +100,11 @@ def home():
 
     return render_template(
         "home.html",
-        wallets=wallets,  # For adding new transactions
-        evm_wallets=evm_wallets,  # EVM compatible wallets
+        wallets=wallets,  # All wallets
+        blockchains=blockchains,  # All blockchains
         evm_matrix=evm_matrix,  # EVM blockchain matrix
         non_evm_matrices=non_evm_matrices,  # Matrices of all non-EVM based blockchains
         transactions=transactions,  # List of all transactions
-        non_evm_blockchains=non_evm_blockchains,  # All non-EVM blockchains
         within_same_day=within_same_day,
         within_same_week=within_same_week,
         within_same_month=within_same_month,
