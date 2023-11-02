@@ -1,0 +1,110 @@
+body {
+    background-color: #0d1a2b;
+    color: #cfd9df;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 100%;
+}
+
+.modal-content {
+    background-color: #0d1a2b;
+    color: #cfd9df;
+    border: 1px solid #444;
+    /* Slightly lighter border for the modal */
+}
+
+.modal-header {
+    border-bottom: 1px solid #444;
+    /* Slightly lighter border for the modal header bottom */
+}
+
+.modal-title {
+    color: #eaeaea;
+    /* Light grey text color for the modal title */
+}
+
+.close {
+    color: #eaeaea;
+    /* Light grey text color for the close button */
+}
+
+.close:hover {
+    color: #fff;
+    /* White text color on hover for the close button */
+}
+
+.btn {
+    margin-top: 1em;
+    border-radius: 8px;
+    border: solid 1px #2f4f6f;
+}
+
+.text-gray {
+    color: #808080;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+.btn-danger {
+    background-color: #f25961;
+}
+
+.btn-primary {
+    background-color: #1f77b4;
+}
+
+.btn-success {
+    background-color: #28a745;
+}
+
+.align-self-center {
+    align-self: center;
+}
+
+.transaction-form .form-control,
+.transaction-form .btn {
+    margin-top: 0;
+    /* Remove additional margin from the top of the button */
+    height: 38px;
+    /* Standardize the height */
+    padding: 6px 12px;
+    /* Bootstrap default padding for form controls */
+    line-height: 1.5;
+    /* Bootstrap default line-height for form controls */
+    box-sizing: border-box;
+    /* Include padding and border in the element's total width and height */
+}
+
+/* Additional styling to ensure text fields and button are vertically centered */
+.transaction-form .btn {
+    align-self: center;
+    /* Align the button itself to center if it's not aligning properly */
+}
+
+.card {
+    border: solid 1px #2f4f6f;
+    border-radius: 8px;
+}
+
+.form-control {
+    background-color: #0d1a2b;
+    color: #cfd9df;
+    border-color: #2f4f6f;
+}
+
+.list-group-item {
+    background-color: #0d1a2b;
+}
+
+.btn-custom {
+    height: 42px;
+    line-height: 30px;
+}
