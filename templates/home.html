@@ -343,6 +343,17 @@
 						this.dispatchEvent(event);
 					}
 				});
+
+				// Code to disable and zero the volume input if the approval checkbox is checked
+				document.getElementById('approvalCheckbox').addEventListener('change', function () {
+					const volumeInput = document.getElementById('volumeInput');
+					if (this.checked) {
+						volumeInput.value = 0;
+						volumeInput.disabled = true;
+					} else {
+						volumeInput.disabled = false;
+					}
+				});
 			};
 
 			document.addEventListener('DOMContentLoaded', function () {
