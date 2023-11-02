@@ -251,8 +251,13 @@
 							{% set count = count + 1 %}
 							<li class="list-group-item d-flex justify-content-between align-items-center bg-dark {% if count > 25 %}d-none{% endif %}"
 								data-page="{{ (count // 25) + 1 }}">
-								{{ transaction.date }}: ${{ "{:,}".format(transaction.volume|int) }} from {{
+								{% if transaction.volume == 0 %}
+								{{ transaction.date }}: Token approval with {{ transaction.wallet.name }} on {{
+								transaction.blockchain.name }}
+								{% else %}
+								{{ transaction.date }}: ${{ "{:,}".format(transaction.volume) }} with {{
 								transaction.wallet.name }} on {{ transaction.blockchain.name }}
+								{% endif %}
 								<form action="/delete_transaction/{{ transaction.id }}" method="post">
 									<input type="submit" value="Delete" class="btn btn-danger">
 								</form>
