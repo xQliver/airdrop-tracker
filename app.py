@@ -17,17 +17,17 @@ db = SQLAlchemy(app)
 class Wallet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    transactions = db.relationship("Transaction", backref="wallet", lazy=True)
+    txs = db.relationship("Tx", backref="wallet", lazy=True)
 
 
 class Blockchain(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     evm = db.Column(db.Integer, nullable=False)
-    transactions = db.relationship("Transaction", backref="blockchain", lazy=True)
+    txs = db.relationship("Tx", backref="blockchain", lazy=True)
 
 
-class Transaction(db.Model):
+class Tx(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
     volume = db.Column(db.Float, nullable=False)
@@ -70,7 +70,7 @@ def allowed_file(filename):
 def home():
     wallets = Wallet.query.all()
     blockchains = Blockchain.query.all()
-    transactions = Transaction.query.all()
+    txs = Tx.query.all()
 
     evm_blockchains = [blockchain for blockchain in blockchains if blockchain.evm == 1]
     non_evm_blockchains = [blockchain for blockchain in blockchains if blockchain.evm == 0]
@@ -104,7 +104,7 @@ def home():
         blockchains=blockchains,  # All blockchains
         evm_matrix=evm_matrix,  # EVM blockchain matrix
         non_evm_matrices=non_evm_matrices,  # Matrices of all non-EVM based blockchains
-        transactions=transactions,  # List of all transactions
+        txs=txs,  # List of all txs
         within_same_day=within_same_day,
         within_same_week=within_same_week,
         within_same_month=within_same_month,
@@ -113,25 +113,16 @@ def home():
 
 def _get_wallet_blockchain_data(wallet, blockchain):
     # Helper function to get wallet-blockchain interaction data
-    wallet_blockchain_transactions = [
-        transaction for transaction in wallet.transactions if transaction.blockchain == blockchain
-    ]
+    wallet_blockchain_txs = [tx for tx in wallet.txs if tx.blockchain == blockchain]
 
-    volume = sum(transaction.volume for transaction in wallet_blockchain_transactions)
-    last_date = (
-        max(transaction.date for transaction in wallet_blockchain_transactions)
-        if wallet_blockchain_transactions
-        else None
-    )
+    volume = sum(tx.volume for tx in wallet_blockchain_txs)
+    last_date = max(tx.date for tx in wallet_blockchain_txs) if wallet_blockchain_txs else None
 
-    unique_months = set(
-        (transaction.date.year, transaction.date.month)
-        for transaction in wallet_blockchain_transactions
-    )
+    unique_months = set((tx.date.year, tx.date.month) for tx in wallet_blockchain_txs)
     num_unique_months = len(unique_months)
-    total_transactions = len(wallet_blockchain_transactions)
+    total_txs = len(wallet_blockchain_txs)
 
-    return [(blockchain.name, volume, last_date, num_unique_months, total_transactions)]
+    return [(blockchain.name, volume, last_date, num_unique_months, total_txs)]
 
 
 @app.route("/add_wallet", methods=["POST"])
@@ -152,27 +143,25 @@ def add_blockchain():
     return redirect(url_for("home"))
 
 
-@app.route("/add_transaction", methods=["POST"])
-def add_transaction():
+@app.route("/add_tx", methods=["POST"])
+def add_tx():
     wallet_id = request.form.get("wallet_id")
     blockchain_id = request.form.get("blockchain_id")
     volume = request.form.get("volume")
     date = request.form.get("date")
     date_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M")
 
-    new_transaction = Transaction(
-        volume=volume, wallet_id=wallet_id, blockchain_id=blockchain_id, date=date_obj
-    )
-    db.session.add(new_transaction)
+    new_tx = Tx(volume=volume, wallet_id=wallet_id, blockchain_id=blockchain_id, date=date_obj)
+    db.session.add(new_tx)
     db.session.commit()
     return redirect(url_for("home"))
 
 
-@app.route("/delete_transaction/<int:id>", methods=["POST"])
-def delete_transaction(id):
-    transaction = Transaction.query.get(id)
-    if transaction:
-        db.session.delete(transaction)
+@app.route("/delete_tx/<int:id>", methods=["POST"])
+def delete_tx(id):
+    tx = Tx.query.get(id)
+    if tx:
+        db.session.delete(tx)
         db.session.commit()
     return redirect(url_for("home"))
 

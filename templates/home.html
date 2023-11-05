@@ -194,7 +194,7 @@
 		<div class="card bg-dark text-white my-4">
 			<div class="card-body">
 				<h5 class="card-title">Add transaction</h5>
-				<form action="/add_transaction" method="post" class="d-flex align-items-center transaction-form">
+				<form action="/add_tx" method="post" class="d-flex align-items-center tx-form">
 					<select name="wallet_id" class="form-control">
 						{% for wallet in wallets %}
 						<option value="{{ wallet.id }}">{{ wallet.name }}</option>
@@ -215,8 +215,8 @@
 						class="form-control ml-2">
 					<input type="number" step="0.01" name="gas" placeholder="Gas" class="form-control ml-2">
 					<input type="text" name="comment" placeholder="Comment" class="form-control ml-2">
-					<input type="datetime-local" name="date" id="transactionDate" class="form-control ml-2">
-					<input type="submit" value="Add Transaction" class="btn btn-success ml-2">
+					<input type="datetime-local" name="date" id="txDate" class="form-control ml-2">
+					<input type="submit" value="Add transaction" class="btn btn-success ml-2">
 				</form>
 			</div>
 		</div>
@@ -247,18 +247,18 @@
 						aria-labelledby="{{ wallet.name|replace(' ', '_')|e }}-tab">
 						<ul class="list-group">
 							{% set count = 0 %}
-							{% for transaction in wallet.transactions %}
+							{% for tx in wallet.txs %}
 							{% set count = count + 1 %}
 							<li class="list-group-item d-flex justify-content-between align-items-center bg-dark {% if count > 25 %}d-none{% endif %}"
 								data-page="{{ (count // 25) + 1 }}">
-								{% if transaction.volume == 0 %}
-								{{ transaction.date }}: Token approval with {{ transaction.wallet.name }} on {{
-								transaction.blockchain.name }}
+								{% if tx.volume == 0 %}
+								{{ tx.date }}: Token approval with {{ tx.wallet.name }} on {{
+								tx.blockchain.name }}
 								{% else %}
-								{{ transaction.date }}: ${{ "{:,}".format(transaction.volume) }} with {{
-								transaction.wallet.name }} on {{ transaction.blockchain.name }}
+								{{ tx.date }}: ${{ "{:,}".format(tx.volume) }} with {{
+								tx.wallet.name }} on {{ tx.blockchain.name }}
 								{% endif %}
-								<form action="/delete_transaction/{{ transaction.id }}" method="post">
+								<form action="/delete_tx/{{ tx.id }}" method="post">
 									<input type="submit" value="Delete" class="btn btn-danger">
 								</form>
 							</li>
@@ -287,15 +287,29 @@
 			</div>
 		</div>
 
+		<!-- Scripts -->
+
+		<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+			integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+			crossorigin="anonymous"></script>
+
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+			integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+			crossorigin="anonymous"></script>
+
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
+			integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+			crossorigin="anonymous"></script>
+
 		<script>
 			window.onload = function () {
 				// Get the form elements
-				let transactionForm = document.querySelector('.transaction-form');
-				let walletSelect = transactionForm.querySelector('[name="wallet_id"]');
-				let blockchainSelect = transactionForm.querySelector('[name="blockchain_id"]');
-				let volumeInput = transactionForm.querySelector('[name="volume"]');
-				let dateInput = transactionForm.querySelector('[name="date"]');
-				let submitButton = transactionForm.querySelector('[type="submit"]');
+				let txForm = document.querySelector('.tx-form');
+				let walletSelect = txForm.querySelector('[name="wallet_id"]');
+				let blockchainSelect = txForm.querySelector('[name="blockchain_id"]');
+				let volumeInput = txForm.querySelector('[name="volume"]');
+				let dateInput = txForm.querySelector('[name="date"]');
+				let submitButton = txForm.querySelector('[type="submit"]');
 
 				// Function to check if the selected value is valid
 				function isValidSelectValue(selectElement) {
@@ -328,7 +342,7 @@
 				updateSubmitButtonState();
 
 				// Code to set default datetime value
-				document.getElementById('transactionDate').addEventListener('click', function () {
+				document.getElementById('txDate').addEventListener('click', function () {
 					if (!this.value) {
 						var now = new Date();
 						var year = now.getFullYear();
@@ -383,17 +397,17 @@
 							currentPages[walletName] = page;
 						}
 
-						updateVisibleTransactions(tabPane, currentPages[walletName]);
+						updateVisibleTxs(tabPane, currentPages[walletName]);
 					});
 				});
 
-				function updateVisibleTransactions(tabPane, page) {
-					const transactions = tabPane.querySelectorAll('.list-group-item');
-					transactions.forEach(function (transaction) {
-						if (parseInt(transaction.dataset.page, 10) === page) {
-							transaction.classList.remove('d-none');
+				function updateVisibleTxs(tabPane, page) {
+					const txs = tabPane.querySelectorAll('.list-group-item');
+					txs.forEach(function (tx) {
+						if (parseInt(tx.dataset.page, 10) === page) {
+							tx.classList.remove('d-none');
 						} else {
-							transaction.classList.add('d-none');
+							tx.classList.add('d-none');
 						}
 					});
 
@@ -414,7 +428,7 @@
 					} else {
 						prevItem.classList.remove('disabled');
 					}
-					if (page * 25 >= transactions.length) {
+					if (page * 25 >= txs.length) {
 						nextItem.classList.add('disabled');
 					} else {
 						nextItem.classList.remove('disabled');
@@ -426,15 +440,6 @@
 				$('[data-toggle="tooltip"]').tooltip();
 			});
 		</script>
-		<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-			integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-			crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-			integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-			crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
-			integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-			crossorigin="anonymous"></script>
 </body>
 
 </html>
