@@ -1,3 +1,18 @@
+"""
+This module provides classes and functions to manage transactions and blockchains in a cryptocurrency application.
+
+Classes:
+    Wallet: Represents a wallet for the airdrop tracking application.
+    Blockchain: Represents a single blockchain with related transactions.
+    Tx: Represents a single transaction in the blockchain.
+
+Functions:
+    within_same_day(date): Check if the provided date is the same as the current UTC day.
+    within_same_week(date): Check if the provided date falls within the same week as the current UTC date.
+    within_same_month(date): Check if the provided date is in the same month as the current UTC date.
+    allowed_file(filename): Verify that a file's extension is within the set of allowed extensions.
+"""
+
 import os
 from datetime import datetime
 from flask import Flask, render_template, request, send_file, redirect, url_for
@@ -15,12 +30,31 @@ db = SQLAlchemy(app)
 
 
 class Wallet(db.Model):
+    """
+    Represents a wallet for the airdrop tracking application.
+
+    Attributes:
+        id (int): Unique identifier for the wallet.
+        name (str): The name of the wallet, must be 50 characters or less and cannot be null.
+        txs (relationship): A list of transaction objects associated with the wallet.
+    """
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     txs = db.relationship("Tx", backref="wallet", lazy=True)
 
 
 class Blockchain(db.Model):
+    """
+    Represents a blockchain in the airdrop tracking application.
+
+    Attributes:
+        id (int): Unique identifier for the blockchain.
+        name (str): The name of the blockchain, limited to 50 characters and cannot be null.
+        evm (int): A flag (typically 0 or 1) indicating whether the blockchain supports the Ethereum Virtual Machine (EVM).
+        txs (relationship): A list of transaction objects that have been executed on this blockchain.
+    """
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     evm = db.Column(db.Integer, nullable=False)
@@ -28,6 +62,17 @@ class Blockchain(db.Model):
 
 
 class Tx(db.Model):
+    """
+    Represents a transaction within the airdrop tracking application.
+
+    Attributes:
+        id (int): Unique identifier for the transaction.
+        date (DateTime): The date and time when the transaction was executed, cannot be null.
+        volume (float): The volume of currency transacted.
+        wallet_id (int): Foreign key associated with the wallet involved in the transaction.
+        blockchain_id (int): Foreign key associated with the blockchain on which the transaction was executed.
+    """
+
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
     volume = db.Column(db.Float, nullable=False)
@@ -36,6 +81,16 @@ class Tx(db.Model):
 
 
 def within_same_day(date):
+    """
+    Check if the provided date is the same as the current UTC day.
+
+    Parameters:
+        date (datetime): The date to compare with the current UTC day.
+
+    Returns:
+        bool: True if the provided date is the same day as today in UTC time, False otherwise or if date is None.
+    """
+
     if date is None:
         return False
     else:
@@ -44,6 +99,18 @@ def within_same_day(date):
 
 
 def within_same_week(date):
+    """
+    Check if the provided date falls within the same week as the current UTC date.
+
+    The comparison is based on the ISO calendar, which means that a week starts on Monday and ends on Sunday.
+
+    Parameters:
+        date (datetime): The date to compare with the current UTC date.
+
+    Returns:
+        bool: True if the provided date is in the same week as the current UTC date and in the same year, False otherwise or if date is None.
+    """
+
     if date is None:
         return False
     else:
@@ -55,6 +122,16 @@ def within_same_week(date):
 
 
 def within_same_month(date):
+    """
+    Check if the provided date is in the same month and year as the current UTC date.
+
+    Parameters:
+        date (datetime): The date to compare with the current UTC date.
+
+    Returns:
+        bool: True if the provided date is in the same month and year as today's UTC date, False otherwise or if date is None.
+    """
+
     if date is None:
         return False
     else:
@@ -63,6 +140,16 @@ def within_same_month(date):
 
 
 def allowed_file(filename):
+    """
+    Check if the file extension of the provided filename is allowed.
+
+    Parameters:
+        filename (str): The name of the file to check.
+
+    Returns:
+        bool: True if the file has an extension and it's in the list of allowed extensions, False otherwise.
+    """
+
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
