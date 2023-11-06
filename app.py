@@ -41,7 +41,7 @@ class Wallet(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    txs = db.relationship("Tx", backref="wallet", lazy=True)
+    txs = db.relationship("Tx", backref="wallet", lazy=True, order_by="Tx.date.desc()")
 
 
 class Blockchain(db.Model):
