@@ -75,7 +75,9 @@ class Tx(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
-    volume = db.Column(db.Float, nullable=False)
+    volume = db.Column(db.Float, nullable=False, default=0.0)
+    gas = db.Column(db.Float, nullable=True)
+    comment = db.Column(db.Text, nullable=True)
     wallet_id = db.Column(db.Integer, db.ForeignKey("wallet.id"), nullable=False)
     blockchain_id = db.Column(db.Integer, db.ForeignKey("blockchain.id"), nullable=False)
 
@@ -235,10 +237,23 @@ def add_tx():
     wallet_id = request.form.get("wallet_id")
     blockchain_id = request.form.get("blockchain_id")
     volume = request.form.get("volume")
+    gas = request.form.get("gas")
+    comment = request.form.get("comment")
     date = request.form.get("date")
     date_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M")
 
-    new_tx = Tx(volume=volume, wallet_id=wallet_id, blockchain_id=blockchain_id, date=date_obj)
+    # Convert empty strings to numeric values
+    volume = float(volume) if volume not in ("", None) else 0.0
+    gas = float(gas) if gas not in ("", None) else 0.0
+
+    new_tx = Tx(
+        volume=volume,
+        gas=gas,
+        comment=comment,
+        wallet_id=wallet_id,
+        blockchain_id=blockchain_id,
+        date=date_obj,
+    )
     db.session.add(new_tx)
     db.session.commit()
     return redirect(url_for("home"))
