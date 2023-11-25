@@ -28,7 +28,7 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-		<a class="navbar-brand" href="#">Airdrop Tracker</a>
+		<a class="navbar-brand" href="#">Airdrop tracker</a>
 
 		<div class="navbar-nav ml-auto">
 			<button type="button" class="btn btn-primary btn-custom mr-2" data-toggle="modal"
@@ -91,6 +91,37 @@
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 					</div>
 				</div>
+			</div>
+		</div>
+
+		<!-- Add Transaction -->
+		<div class="card bg-dark text-white my-4">
+			<div class="card-body">
+				<h5 class="card-title">Add transaction</h5>
+				<form action="/add_tx" method="post" class="d-flex align-items-center tx-form">
+					<select name="wallet_id" class="form-control">
+						{% for wallet in wallets %}
+						<option value="{{ wallet.id }}">{{ wallet.name }}</option>
+						{% endfor %}
+					</select>
+					<select name="blockchain_id" class="form-control ml-2">
+						{% for blockchain in blockchains %}
+						<option value="{{ blockchain.id }}">{{ blockchain.name }}</option>
+						{% endfor %}
+					</select>
+					<div class="form-check form-check-inline ml-2">
+						<input class="form-check-input" type="checkbox" id="approvalCheckbox" name="approvalCheckbox">
+						<label class="form-check-label" for="approvalCheckbox">Free mint or approval?</label>
+						<i class="fas fa-info-circle ml-1" data-toggle="tooltip" data-placement="top"
+							title="Check this box if the transaction was only a free mint or token spend approval with no volume"></i>
+					</div>
+					<input type="number" step="0.01" name="volume" id="volumeInput" placeholder="Volume"
+						class="form-control ml-2">
+					<input type="number" step="0.01" name="gas" placeholder="Gas (optional)" class="form-control ml-2">
+					<input type="text" name="comment" placeholder="Comment (optional)" class="form-control ml-2">
+					<input type="datetime-local" name="date" id="txDate" class="form-control ml-2">
+					<input type="submit" value="Add transaction" class="btn btn-success ml-2">
+				</form>
 			</div>
 		</div>
 
@@ -190,37 +221,6 @@
 			</div>
 		</div>
 
-		<!-- Add Transaction -->
-		<div class="card bg-dark text-white my-4">
-			<div class="card-body">
-				<h5 class="card-title">Add transaction</h5>
-				<form action="/add_tx" method="post" class="d-flex align-items-center tx-form">
-					<select name="wallet_id" class="form-control">
-						{% for wallet in wallets %}
-						<option value="{{ wallet.id }}">{{ wallet.name }}</option>
-						{% endfor %}
-					</select>
-					<select name="blockchain_id" class="form-control ml-2">
-						{% for blockchain in blockchains %}
-						<option value="{{ blockchain.id }}">{{ blockchain.name }}</option>
-						{% endfor %}
-					</select>
-					<div class="form-check form-check-inline ml-2">
-						<input class="form-check-input" type="checkbox" id="approvalCheckbox" name="approvalCheckbox">
-						<label class="form-check-label" for="approvalCheckbox">Mint/Approval?</label>
-						<i class="fas fa-info-circle ml-1" data-toggle="tooltip" data-placement="top"
-							title="Check this box if the transaction was only a mint or token spend approval with no volume"></i>
-					</div>
-					<input type="number" step="0.01" name="volume" id="volumeInput" placeholder="Volume"
-						class="form-control ml-2">
-					<input type="number" step="0.01" name="gas" placeholder="Gas" class="form-control ml-2">
-					<input type="text" name="comment" placeholder="Comment" class="form-control ml-2">
-					<input type="datetime-local" name="date" id="txDate" class="form-control ml-2">
-					<input type="submit" value="Add transaction" class="btn btn-success ml-2">
-				</form>
-			</div>
-		</div>
-
 		<!-- Transactions -->
 		<div class="card bg-dark text-white my-4">
 			<div class="card-body">
@@ -251,13 +251,16 @@
 							{% set count = count + 1 %}
 							<li class="list-group-item d-flex justify-content-between align-items-center bg-dark {% if count > 25 %}d-none{% endif %}"
 								data-page="{{ (count // 25) + 1 }}">
-								{% if tx.volume == 0 %}
-								{{ tx.date }}: Mint or token approval with {{ tx.wallet.name }} on {{ tx.blockchain.name }}{% if tx.gas and tx.gas > 0 %} and spent ${{ tx.gas }} on gas{% endif %}
+								{% if tx.volume == 0 or tx.volume == none %}
+								{{ tx.date }}: Mint or token approval with {{ tx.wallet.name }} on {{ tx.blockchain.name
+								}}{% if tx.gas and tx.gas > 0 %} and spent ${{ tx.gas }} on gas{% endif %}
 								{% if tx.comment %} ({{ tx.comment }}){% endif %}
 								{% else %}
-								{{ tx.date }}: ${{ "{:,}".format(tx.volume) }} volume with {{ tx.wallet.name }} on {{ tx.blockchain.name }}
-									{% if tx.gas and tx.gas > 0 %} and spent ${{ tx.gas }} on gas{% endif %}
-									{% if tx.comment %} ({{ tx.comment }}){% endif %}
+								{{ tx.date }}:
+								{% if tx.volume is not none %} ${{ "{:,}".format(tx.volume) }} volume with {{
+								tx.wallet.name }} on {{ tx.blockchain.name }}{% endif %}
+								{% if tx.gas and tx.gas > 0 %} and spent ${{ tx.gas }} on gas{% endif %}
+								{% if tx.comment %} ({{ tx.comment }}){% endif %}
 								{% endif %}
 								<form action="/delete_tx/{{ tx.id }}" method="post">
 									<input type="submit" value="Delete" class="btn btn-danger">

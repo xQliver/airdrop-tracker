@@ -75,11 +75,13 @@ class Tx(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
-    volume = db.Column(db.Float, nullable=False, default=0.0)
+    volume = db.Column(db.Float, nullable=True)
     gas = db.Column(db.Float, nullable=True)
     comment = db.Column(db.Text, nullable=True)
     wallet_id = db.Column(db.Integer, db.ForeignKey("wallet.id"), nullable=False)
-    blockchain_id = db.Column(db.Integer, db.ForeignKey("blockchain.id"), nullable=False)
+    blockchain_id = db.Column(
+        db.Integer, db.ForeignKey("blockchain.id"), nullable=False
+    )
 
 
 def within_same_day(date):
@@ -162,7 +164,9 @@ def home():
     txs = Tx.query.all()
 
     evm_blockchains = [blockchain for blockchain in blockchains if blockchain.evm == 1]
-    non_evm_blockchains = [blockchain for blockchain in blockchains if blockchain.evm == 0]
+    non_evm_blockchains = [
+        blockchain for blockchain in blockchains if blockchain.evm == 0
+    ]
 
     # EVM Wallets Matrix
     evm_matrix = []
@@ -183,7 +187,9 @@ def home():
         matrix = []
         for wallet in wallets:
             row = _get_wallet_blockchain_data(wallet, blockchain)
-            if any(data[1] for data in row):  # Check if there's any volume, indicating interaction
+            if any(
+                data[1] for data in row
+            ):  # Check if there's any volume, indicating interaction
                 matrix.append((wallet.name, row))
         non_evm_matrices[blockchain.name] = matrix
 
@@ -204,8 +210,12 @@ def _get_wallet_blockchain_data(wallet, blockchain):
     # Helper function to get wallet-blockchain interaction data
     wallet_blockchain_txs = [tx for tx in wallet.txs if tx.blockchain == blockchain]
 
-    volume = sum(tx.volume for tx in wallet_blockchain_txs)
-    last_date = max(tx.date for tx in wallet_blockchain_txs) if wallet_blockchain_txs else None
+    volume = sum(
+        tx.volume if tx.volume is not None else 0.0 for tx in wallet_blockchain_txs
+    )
+    last_date = (
+        max(tx.date for tx in wallet_blockchain_txs) if wallet_blockchain_txs else None
+    )
 
     unique_months = set((tx.date.year, tx.date.month) for tx in wallet_blockchain_txs)
     num_unique_months = len(unique_months)
@@ -226,7 +236,8 @@ def add_wallet():
 @app.route("/add_blockchain", methods=["POST"])
 def add_blockchain():
     name = request.form.get("name")
-    new_blockchain = Blockchain(name=name)
+    evm = request.form.get("evm")
+    new_blockchain = Blockchain(name=name, evm=evm)
     db.session.add(new_blockchain)
     db.session.commit()
     return redirect(url_for("home"))
@@ -242,9 +253,12 @@ def add_tx():
     date = request.form.get("date")
     date_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M")
 
-    # Convert empty strings to numeric values
-    volume = float(volume) if volume not in ("", None) else 0.0
-    gas = float(gas) if gas not in ("", None) else 0.0
+    # Convert empty strings to None (NULL in the database)
+    volume = float(volume) if volume else None
+    gas = float(gas) if gas else None  # Will be None if gas is an empty string or None
+    comment = (
+        comment if comment else None
+    )  # Will be None if comment is an empty string or None
 
     new_tx = Tx(
         volume=volume,
