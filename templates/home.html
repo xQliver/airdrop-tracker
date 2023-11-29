@@ -444,6 +444,25 @@
 				$('[data-toggle="tooltip"]').tooltip();
 			});
 		</script>
-</body>
+
+		<!-- JavaScript to handle storing and resetting values -->
+		<script>
+			document.addEventListener('DOMContentLoaded', (event) => {
+				document.querySelector('.tx-form').addEventListener('submit', function () {
+					localStorage.setItem('selectedWallet', document.querySelector('select[name="wallet_id"]').value);
+					localStorage.setItem('selectedBlockchain', document.querySelector('select[name="blockchain_id"]').value);
+				});
+
+				var selectedWallet = localStorage.getItem('selectedWallet');
+				var selectedBlockchain = localStorage.getItem('selectedBlockchain');
+
+				if (selectedWallet) {
+					document.querySelector('select[name="wallet_id"]').value = selectedWallet;
+				}
+				if (selectedBlockchain) {
+					document.querySelector('select[name="blockchain_id"]').value = selectedBlockchain;
+				}
+			});
+		</script>
 
 </html>
