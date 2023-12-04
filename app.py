@@ -236,7 +236,10 @@ def add_wallet():
 @app.route("/add_blockchain", methods=["POST"])
 def add_blockchain():
     name = request.form.get("name")
-    evm = request.form.get("evm")
+
+    # If 'evm' is in the form data, it's checked (value '0'), else it's unchecked
+    evm = "evm" in request.form
+
     new_blockchain = Blockchain(name=name, evm=evm)
     db.session.add(new_blockchain)
     db.session.commit()
