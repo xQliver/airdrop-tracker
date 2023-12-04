@@ -86,7 +86,24 @@
 								</form>
 							</div>
 						</div>
+
+						<!-- Delete Blockchain Form -->
+						<div class="card bg-dark text-white my-4">
+							<div class="card-body">
+								<h5 class="card-title">Delete Blockchain</h5>
+								<form id="deleteBlockchainForm" action="/delete_blockchain" method="post">
+									<select name="blockchainToDelete" class="form-control">
+										{% for blockchain in blockchains %}
+											<option value="{{ blockchain.name }}">{{ blockchain.name }}</option>
+										{% endfor %}
+									</select>
+									<input type="button" value="Delete Blockchain" class="btn btn-danger mt-2" onclick="confirmDeletion()">
+								</form>
+							</div>
+						</div>
 					</div>
+
+					<!-- Close button at the bottom of the popup -->
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 					</div>
@@ -443,6 +460,18 @@
 			$(document).ready(function () {
 				$('[data-toggle="tooltip"]').tooltip();
 			});
+		</script>
+
+		<script>
+			function confirmDeletion() {
+				var form = document.getElementById('deleteBlockchainForm');
+				var selectedBlockchain = form.blockchainToDelete.options[form.blockchainToDelete.selectedIndex].text;
+				var confirmMessage = "Do you really want to remove the \"" + selectedBlockchain + "\" blockchain and all of the related transactions? This cannot be undone!";
+
+				if (confirm(confirmMessage)) {
+					form.submit();
+				}
+			}
 		</script>
 
 		<!-- JavaScript to handle storing and resetting values -->

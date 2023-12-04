@@ -243,6 +243,23 @@ def add_blockchain():
     return redirect(url_for("home"))
 
 
+@app.route("/delete_blockchain", methods=["POST"])
+def delete_blockchain():
+    blockchain_name = request.form.get("blockchainToDelete")
+
+    # Query to find the blockchain by name
+    blockchain = Blockchain.query.filter_by(name=blockchain_name).first()
+    if blockchain:
+        # Delete all transactions associated with this blockchain
+        Tx.query.filter_by(blockchain_id=blockchain.id).delete()
+
+        # Now delete the blockchain
+        db.session.delete(blockchain)
+        db.session.commit()
+
+    return redirect(url_for("home"))
+
+
 @app.route("/add_tx", methods=["POST"])
 def add_tx():
     wallet_id = request.form.get("wallet_id")
