@@ -82,18 +82,19 @@
 								<h5 class="card-title">Add blockchain</h5>
 								<form action="/add_blockchain" method="post" class="d-flex align-items-center">
 									<input type="text" name="name" placeholder="Blockchain name" class="form-control">
-									
+
 									<!-- Hidden input for default 'false' value -->
 									<input type="hidden" name="evm" value="false">
-								
+
 									<!-- Checkbox for EVM -->
 									<div class="form-check ml-2">
-										<input class="form-check-input" type="checkbox" id="evmCheckbox" name="evm" value="true">
+										<input class="form-check-input" type="checkbox" id="evmCheckbox" name="evm"
+											value="true">
 										<label class="form-check-label" for="evmCheckbox">
 											EVM?
 										</label>
 									</div>
-								
+
 									<input type="submit" value="Add Blockchain" class="btn btn-primary ml-2">
 								</form>
 							</div>
@@ -106,10 +107,11 @@
 								<form id="deleteBlockchainForm" action="/delete_blockchain" method="post">
 									<select name="blockchainToDelete" class="form-control">
 										{% for blockchain in blockchains %}
-											<option value="{{ blockchain.name }}">{{ blockchain.name }}</option>
+										<option value="{{ blockchain.name }}">{{ blockchain.name }}</option>
 										{% endfor %}
 									</select>
-									<input type="button" value="Delete Blockchain" class="btn btn-danger mt-2" onclick="confirmDeletion()">
+									<input type="button" value="Delete Blockchain" class="btn btn-danger mt-2"
+										onclick="confirmDeletion()">
 								</form>
 							</div>
 						</div>
@@ -192,8 +194,13 @@
 									<br>
 									<small>Months: {% if data[4]|default(0) == 0 %}-{% else %}{{ data[3]|default('0')
 										}}{% endif %}</small>
-									<small>, Tx: {% if data[4]|default(0) == 0 %}-{% else %}{{ data[4]|default('0') }}{%
+									<small>| Tx: {% if data[4]|default(0) == 0 %}-{% else %}{{ data[4]|default('0') }}{%
 										endif %}</small>
+									<small>
+										{% if data[4]|default(0) != 0 and data[5]|default(0) != 0 %}
+										| Gas: ${{ "%.2f"|format(data[5]|default(0)) }}
+										{% endif %}
+									</small>
 								</div>
 							</td>
 							{% endfor %}

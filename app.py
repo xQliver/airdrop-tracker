@@ -221,7 +221,12 @@ def _get_wallet_blockchain_data(wallet, blockchain):
     num_unique_months = len(unique_months)
     total_txs = len(wallet_blockchain_txs)
 
-    return [(blockchain.name, volume, last_date, num_unique_months, total_txs)]
+    # Calculate the total gas used
+    total_gas = sum(tx.gas if tx.gas is not None else 0 for tx in wallet_blockchain_txs)
+
+    return [
+        (blockchain.name, volume, last_date, num_unique_months, total_txs, total_gas)
+    ]
 
 
 @app.route("/add_wallet", methods=["POST"])
