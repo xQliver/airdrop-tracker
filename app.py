@@ -163,6 +163,13 @@ def home():
     blockchains = Blockchain.query.all()
     txs = Tx.query.all()
 
+    # Calculate total gas spent and total number of transactions
+    total_gas_spent = sum(tx.gas if tx.gas is not None else 0 for tx in txs)
+    total_transactions = len(txs)
+
+    # Variables to calculate combinations of wallets/blockchains with volume > 0
+    wallet_blockchain_combinations = set()
+
     evm_blockchains = [blockchain for blockchain in blockchains if blockchain.evm == 1]
     non_evm_blockchains = [
         blockchain for blockchain in blockchains if blockchain.evm == 0
@@ -176,9 +183,10 @@ def home():
         for blockchain in evm_blockchains:
             data = _get_wallet_blockchain_data(wallet, blockchain)
             row.extend(data)
-            if data[0][1] > 0:  # If there's any volume, it indicates an interaction
+            if data[0][1] > 0:  # If there's any volume
                 has_interaction = True
-        if has_interaction:  # Only add to the matrix if there was an interaction
+                wallet_blockchain_combinations.add((wallet.id, blockchain.id))
+        if has_interaction:
             evm_matrix.append((wallet.name, row))
 
     # Non-EVM Wallets Matrix (one per blockchain)
@@ -191,7 +199,11 @@ def home():
                 data[1] for data in row
             ):  # Check if there's any volume, indicating interaction
                 matrix.append((wallet.name, row))
+                wallet_blockchain_combinations.add((wallet.id, blockchain.id))
         non_evm_matrices[blockchain.name] = matrix
+
+    # Calculate total combinations with volume > 0
+    potential_airdrops = len(wallet_blockchain_combinations)
 
     return render_template(
         "home.html",
@@ -203,6 +215,9 @@ def home():
         within_same_day=within_same_day,
         within_same_week=within_same_week,
         within_same_month=within_same_month,
+        total_gas_spent=total_gas_spent,
+        total_transactions=total_transactions,
+        potential_airdrops=potential_airdrops,
     )
 
 

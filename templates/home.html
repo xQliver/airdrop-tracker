@@ -31,6 +31,9 @@
 		<a class="navbar-brand" href="#">Airdrop tracker</a>
 
 		<div class="navbar-nav ml-auto">
+			<button type="button" class="btn btn-primary btn-custom mr-2" data-toggle="modal" data-target="#infoModal">
+				<i class="fas fa-info-circle"></i>
+			</button>
 			<button type="button" class="btn btn-primary btn-custom mr-2" data-toggle="modal"
 				data-target="#settingsModal">
 				<i class="fas fa-cog"></i>
@@ -118,6 +121,34 @@
 					</div>
 
 					<!-- Close button at the bottom of the popup -->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Info Modal Structure -->
+		<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="infoModalLabel">Wallet Information</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<!-- Display the total gas spent -->
+						<p>Total Gas Spent: ${{ total_gas_spent }}</p>
+					
+						<!-- Display the total number of transactions -->
+						<p>Total Transactions: {{ total_transactions }}</p>
+					
+						<!-- Display the total combinations of wallets/blockchains with volume > 0 -->
+						<p>Amount of potential airdrops: {{ potential_airdrops }}</p>
+					</div>
+					
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 					</div>
