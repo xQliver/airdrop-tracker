@@ -163,9 +163,13 @@ def home():
     blockchains = Blockchain.query.all()
     txs = Tx.query.all()
 
-    # Calculate total gas spent and total number of transactions
+    # Calculate total volume, gas spent and total number of transactions, unique days
+    total_volume = sum(tx.volume if tx.volume is not None else 0 for tx in txs)
     total_gas_spent = sum(tx.gas if tx.gas is not None else 0 for tx in txs)
     total_transactions = len(txs)
+    unique_days_count = db.session.query(
+        db.func.count(db.func.distinct(db.func.date(Tx.date)))
+    ).scalar()
 
     # Variables to calculate combinations of wallets/blockchains with volume > 0
     wallet_blockchain_combinations = set()
@@ -215,9 +219,11 @@ def home():
         within_same_day=within_same_day,
         within_same_week=within_same_week,
         within_same_month=within_same_month,
+        total_volume=total_volume,
         total_gas_spent=total_gas_spent,
         total_transactions=total_transactions,
         potential_airdrops=potential_airdrops,
+        unique_days_count=unique_days_count,
     )
 
 

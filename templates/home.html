@@ -133,20 +133,27 @@
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="infoModalLabel">Wallet Information</h5>
+						<h5 class="modal-title" id="infoModalLabel">Airdrop hunting stats</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
 					<div class="modal-body">
+						<!-- Display the total volume -->
+						<p>Total volume: ${{ "%.2f"|format(total_volume|default(0)) }}</p>
+
 						<!-- Display the total gas spent -->
-						<p>Total Gas Spent: ${{ total_gas_spent }}</p>
+						<p>Total gas spent: ${{ "%.2f"|format(total_gas_spent|default(0)) }}</p>
 					
 						<!-- Display the total number of transactions -->
-						<p>Total Transactions: {{ total_transactions }}</p>
+						<p>Total amount of transactions: {{ total_transactions }}</p>
 					
 						<!-- Display the total combinations of wallets/blockchains with volume > 0 -->
 						<p>Amount of potential airdrops: {{ potential_airdrops }}</p>
+
+						<!-- Display the amount of unique days doing transactions-->
+						<p>Amount of unique days doing transactions: {{ unique_days_count }}</p>
+						
 					</div>
 					
 					<div class="modal-footer">
