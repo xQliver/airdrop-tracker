@@ -168,28 +168,43 @@
 			<div class="card-body">
 				<h5 class="card-title">Add transaction</h5>
 				<form action="/add_tx" method="post" class="d-flex align-items-center tx-form">
-					<select name="wallet_id" class="form-control">
-						{% for wallet in wallets %}
-						<option value="{{ wallet.id }}">{{ wallet.name }}</option>
-						{% endfor %}
-					</select>
-					<select name="blockchain_id" class="form-control ml-2">
-						{% for blockchain in blockchains %}
-						<option value="{{ blockchain.id }}">{{ blockchain.name }}</option>
-						{% endfor %}
-					</select>
-					<div class="form-check form-check-inline ml-2">
-						<input class="form-check-input" type="checkbox" id="approvalCheckbox" name="approvalCheckbox">
-						<label class="form-check-label" for="approvalCheckbox">Free mint or approval?</label>
-						<i class="fas fa-info-circle ml-1" data-toggle="tooltip" data-placement="top"
-							title="Check this box if the transaction was only a free mint or token spend approval with no volume"></i>
+					<div class="container-fluid full-height">
+						<div class="row h-100">
+							<div class="col" style="width: 12.5%;">
+								<select name="wallet_id" class="form-control">
+									{% for wallet in wallets %}
+									<option value="{{ wallet.id }}">{{ wallet.name }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="col" style="width: 12.5%;"><select name="blockchain_id"
+									class="form-control ml-2">
+									{% for blockchain in blockchains %}
+									<option value="{{ blockchain.id }}">{{ blockchain.name }}</option>
+									{% endfor %}
+								</select></div>
+							<div class="col" style="width: 12.5%;">
+								<div class="form-check form-check-inline ml-2">
+									<input class="form-check-input" type="checkbox" id="approvalCheckbox"
+										name="approvalCheckbox">
+									<label class="form-check-label" for="approvalCheckbox">Free mint or
+										approval?</label>
+									<i class="fas fa-info-circle ml-1" data-toggle="tooltip" data-placement="top"
+										title="Check this box if the transaction was only a free mint or token spend approval with no volume"></i>
+								</div>
+							</div>
+							<div class="col" style="width: 12.5%;"><input type="number" step="0.01" name="volume"
+									id="volumeInput" placeholder="Volume" class="form-control ml-2"></div>
+							<div class="col" style="width: 12.5%;"><input type="number" step="0.01" name="gas"
+									placeholder="Gas (optional)" class="form-control ml-2"></div>
+							<div class="col" style="width: 12.5%;"><input type="text" name="comment"
+									placeholder="Comment (optional)" class="form-control ml-2"></div>
+							<div class="col" style="width: 12.5%;"><input type="datetime-local" name="date" id="txDate"
+									class="form-control ml-2"></div>
+							<div class="col" style="width: 12.5%;"><input type="submit" value="Add transaction"
+									class="btn btn-success ml-2"></div>
+						</div>
 					</div>
-					<input type="number" step="0.01" name="volume" id="volumeInput" placeholder="Volume"
-						class="form-control ml-2">
-					<input type="number" step="0.01" name="gas" placeholder="Gas (optional)" class="form-control ml-2">
-					<input type="text" name="comment" placeholder="Comment (optional)" class="form-control ml-2">
-					<input type="datetime-local" name="date" id="txDate" class="form-control ml-2">
-					<input type="submit" value="Add transaction" class="btn btn-success ml-2">
 				</form>
 			</div>
 		</div>
